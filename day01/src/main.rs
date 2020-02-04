@@ -1,12 +1,10 @@
 use std::fs;
 
 fn step(c: char) -> i32 {
-    if c == '(' {
-        1
-    } else if c == ')' {
-        -1
-    } else {
-        0
+    match c {
+        '(' => 1,
+        ')' => -1,
+        _ => panic!("no no no"),
     }
 }
 
