@@ -1,20 +1,19 @@
 use std::fs;
 
-fn get_dimensions(input: &str) -> Vec<u32> {
+fn get_dimensions(input: &str) -> (u32, u32, u32) {
     let mut dimensions: Vec<u32> = input
         .split('x')
         .map(|dimension| dimension.parse().unwrap())
         .collect();
     dimensions.sort();
-    dimensions
+    (dimensions[0], dimensions[1], dimensions[2])
 }
 
 fn part_1(input: &str) -> u32 {
     input
         .lines()
         .map(|line| {
-            let dim = get_dimensions(line);
-            let (a, b, c) = (dim[0], dim[1], dim[2]);
+            let (a, b, c) = get_dimensions(line);
             let sides = vec![a * b, a * c, b * c];
             sides.iter().map(|side| 2 * side).sum::<u32>() + a * b
         })
@@ -25,8 +24,7 @@ fn part_2(input: &str) -> u32 {
     input
         .lines()
         .map(|line| {
-            let dim = get_dimensions(line);
-            let (a, b, c) = (dim[0], dim[1], dim[2]);
+            let (a, b, c) = get_dimensions(line);
             2 * a + 2 * b + a * b * c
         })
         .sum()
