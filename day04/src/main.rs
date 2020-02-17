@@ -1,19 +1,19 @@
 extern crate md5;
 
-fn get_first_24_bits_for(key: &str, index: usize) -> u32 {
+fn get_first_24_bits_of_md5(key: &str, index: usize) -> u32 {
     let digest = *md5::compute(format!("{}{}", key, index));
     ((digest[0] as u32) << 16) + ((digest[1] as u32) << 8) + ((digest[2] as u32) << 0)
 }
 
 fn part_1(key: &str) -> usize {
     (0..)
-        .take_while(|i| get_first_24_bits_for(key, *i) & 0xFFFFF0 != 0)
+        .take_while(|i| get_first_24_bits_of_md5(key, *i) & 0xFFFFF0 != 0)
         .count()
 }
 
 fn part_2(key: &str) -> usize {
     (0..)
-        .take_while(|i| get_first_24_bits_for(key, *i) & 0xFFFFFF != 0)
+        .take_while(|i| get_first_24_bits_of_md5(key, *i) & 0xFFFFFF != 0)
         .count()
 }
 
