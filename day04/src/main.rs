@@ -1,5 +1,3 @@
-extern crate md5;
-
 fn get_first_24_bits_of_md5(key: &str, index: usize) -> u32 {
     let digest = *md5::compute(format!("{}{}", key, index));
     ((digest[0] as u32) << 16) + ((digest[1] as u32) << 8) + ((digest[2] as u32) << 0)
