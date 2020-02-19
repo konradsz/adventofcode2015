@@ -31,6 +31,35 @@ where
     }
 }
 
+fn process_grid<TurnOnLight, TurnOffLight, ToggleLight>(
+    input: &str,
+    grid: &mut Vec<u32>,
+    turn_on_light: &TurnOnLight,
+    turn_off_light: &TurnOffLight,
+    toggle_light: &ToggleLight,
+) where
+    TurnOnLight: Fn(&mut u32),
+    TurnOffLight: Fn(&mut u32),
+    ToggleLight: Fn(&mut u32),
+{
+    let turn_on_regex = Regex::new(r"^turn on (\d+),(\d+) through (\d+),(\d+)$").unwrap();
+    let turn_off_regex = Regex::new(r"^turn off (\d+),(\d+) through (\d+),(\d+)$").unwrap();
+    let toggle_regex = Regex::new(r"^toggle (\d+),(\d+) through (\d+),(\d+)$").unwrap();
+
+    for line in input.lines() {
+        if turn_on_regex.is_match(&line) {
+            let rectangle = parse_line(line, &turn_on_regex);
+            apply(grid, &rectangle, turn_on_light);
+        } else if turn_off_regex.is_match(&line) {
+            let rectangle = parse_line(line, &turn_off_regex);
+            apply(grid, &rectangle, turn_off_light);
+        } else if toggle_regex.is_match(&line) {
+            let rectangle = parse_line(line, &toggle_regex);
+            apply(grid, &rectangle, toggle_light);
+        }
+    }
+}
+
 fn part_1(input: &str) -> usize {
     let mut grid = vec![0; GRID_SIZE * GRID_SIZE];
 
@@ -44,22 +73,13 @@ fn part_1(input: &str) -> usize {
         }
     };
 
-    let turn_on_regex = Regex::new(r"^turn on (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let turn_off_regex = Regex::new(r"^turn off (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let toggle_regex = Regex::new(r"^toggle (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-
-    for line in input.lines() {
-        if turn_on_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_on_regex);
-            apply(&mut grid, &rectangle, turn_on_light);
-        } else if turn_off_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_off_regex);
-            apply(&mut grid, &rectangle, turn_off_light);
-        } else if toggle_regex.is_match(&line) {
-            let rectangle = parse_line(line, &toggle_regex);
-            apply(&mut grid, &rectangle, toggle_light);
-        }
-    }
+    process_grid(
+        input,
+        &mut grid,
+        &turn_on_light,
+        &turn_off_light,
+        &toggle_light,
+    );
 
     grid.iter().filter(|&light| *light == 1).count()
 }
@@ -71,22 +91,13 @@ fn part_2(input: &str) -> u32 {
     let turn_off_light = |light: &mut u32| *light = light.saturating_sub(1);
     let toggle_light = |light: &mut u32| *light += 2;
 
-    let turn_on_regex = Regex::new(r"^turn on (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let turn_off_regex = Regex::new(r"^turn off (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let toggle_regex = Regex::new(r"^toggle (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-
-    for line in input.lines() {
-        if turn_on_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_on_regex);
-            apply(&mut grid, &rectangle, turn_on_light);
-        } else if turn_off_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_off_regex);
-            apply(&mut grid, &rectangle, turn_off_light);
-        } else if toggle_regex.is_match(&line) {
-            let rectangle = parse_line(line, &toggle_regex);
-            apply(&mut grid, &rectangle, toggle_light);
-        }
-    }
+    process_grid(
+        input,
+        &mut grid,
+        &turn_on_light,
+        &turn_off_light,
+        &toggle_light,
+    );
 
     grid.iter().sum()
 }
@@ -113,6 +124,9 @@ mod tests {
     #[test]
     fn test_part2() {
         assert_eq!(1, part_2("turn on 0,0 through 0,0"));
-        assert_eq!((2 * GRID_SIZE * GRID_SIZE) as u32, part_2("toggle 0,0 through 999,999"));
+        assert_eq!(
+            (2 * GRID_SIZE * GRID_SIZE) as u32,
+            part_2("toggle 0,0 through 999,999")
+        );
     }
 }
