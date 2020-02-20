@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 use regex::Regex;
 use std::fs;
 
@@ -10,11 +13,17 @@ struct Rectangle {
     bottom_y: usize,
 }
 
-fn parse_line(line: &str, regex: &Regex) -> (String, Rectangle) {
-    let caps = regex.captures(line).unwrap();
+fn parse_line(line: &str) -> (String, Rectangle) {
+    lazy_static! {
+        static ref INSTRUCTION: Regex = Regex::new(
+            r"^(?P<cmd>.+) (?P<top_x>\d+),(?P<top_y>\d+) through (?P<bottom_x>\d+),(?P<bottom_y>\d+)$",
+        )
+        .unwrap();
+    }
+    let caps = INSTRUCTION.captures(line).unwrap();
 
     (
-        String::from(&caps["command"]),
+        String::from(&caps["cmd"]),
         Rectangle {
             top_x: caps["top_x"].parse::<usize>().unwrap(),
             top_y: caps["top_y"].parse::<usize>().unwrap(),
@@ -46,13 +55,8 @@ fn process_grid<TurnOnLight, TurnOffLight, ToggleLight>(
     TurnOffLight: Fn(&mut u32),
     ToggleLight: Fn(&mut u32),
 {
-    let instruction = Regex::new(
-        r"^(?P<command>.+) (?P<top_x>\d+),(?P<top_y>\d+) through (?P<bottom_x>\d+),(?P<bottom_y>\d+)$",
-    )
-    .unwrap();
-
     for line in input.lines() {
-        let (command, rectangle) = parse_line(line, &instruction);
+        let (command, rectangle) = parse_line(line);
         match command.as_str() {
             "turn on" => apply(grid, &rectangle, turn_on_light),
             "turn off" => apply(grid, &rectangle, turn_off_light),
