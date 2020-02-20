@@ -10,14 +10,18 @@ struct Rectangle {
     bottom_y: usize,
 }
 
-fn parse_line(line: &str, regex: &Regex) -> Rectangle {
+fn parse_line(line: &str, regex: &Regex) -> (String, Rectangle) {
     let caps = regex.captures(line).unwrap();
-    Rectangle {
-        top_x: caps[1].parse::<usize>().unwrap(),
-        top_y: caps[2].parse::<usize>().unwrap(),
-        bottom_x: caps[3].parse::<usize>().unwrap(),
-        bottom_y: caps[4].parse::<usize>().unwrap(),
-    }
+
+    (
+        String::from(&caps["command"]),
+        Rectangle {
+            top_x: caps["top_x"].parse::<usize>().unwrap(),
+            top_y: caps["top_y"].parse::<usize>().unwrap(),
+            bottom_x: caps["bottom_x"].parse::<usize>().unwrap(),
+            bottom_y: caps["bottom_y"].parse::<usize>().unwrap(),
+        },
+    )
 }
 
 fn apply<Command>(grid: &mut Vec<u32>, rectangle: &Rectangle, command: Command)
@@ -42,20 +46,18 @@ fn process_grid<TurnOnLight, TurnOffLight, ToggleLight>(
     TurnOffLight: Fn(&mut u32),
     ToggleLight: Fn(&mut u32),
 {
-    let turn_on_regex = Regex::new(r"^turn on (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let turn_off_regex = Regex::new(r"^turn off (\d+),(\d+) through (\d+),(\d+)$").unwrap();
-    let toggle_regex = Regex::new(r"^toggle (\d+),(\d+) through (\d+),(\d+)$").unwrap();
+    let instruction = Regex::new(
+        r"^(?P<command>.+) (?P<top_x>\d+),(?P<top_y>\d+) through (?P<bottom_x>\d+),(?P<bottom_y>\d+)$",
+    )
+    .unwrap();
 
     for line in input.lines() {
-        if turn_on_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_on_regex);
-            apply(grid, &rectangle, turn_on_light);
-        } else if turn_off_regex.is_match(&line) {
-            let rectangle = parse_line(line, &turn_off_regex);
-            apply(grid, &rectangle, turn_off_light);
-        } else if toggle_regex.is_match(&line) {
-            let rectangle = parse_line(line, &toggle_regex);
-            apply(grid, &rectangle, toggle_light);
+        let (command, rectangle) = parse_line(line, &instruction);
+        match command.as_str() {
+            "turn on" => apply(grid, &rectangle, turn_on_light),
+            "turn off" => apply(grid, &rectangle, turn_off_light),
+            "toggle" => apply(grid, &rectangle, toggle_light),
+            _ => panic!("unknown command"),
         }
     }
 }
