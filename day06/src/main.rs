@@ -121,14 +121,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part1() {
+    fn test_part_1() {
         assert_eq!(GRID_SIZE * GRID_SIZE, part_1("turn on 0,0 through 999,999"));
         assert_eq!(GRID_SIZE, part_1("toggle 0,0 through 999,0"));
         assert_eq!(4, part_1("turn on 499,499 through 500,500"));
     }
 
     #[test]
-    fn test_part2() {
+    fn test_part_2() {
         assert_eq!(1, part_2("turn on 0,0 through 0,0"));
         assert_eq!(
             (2 * GRID_SIZE * GRID_SIZE) as u32,

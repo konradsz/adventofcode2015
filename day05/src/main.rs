@@ -79,7 +79,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part1() {
+    fn test_part_1() {
         assert!(is_string_nice_part_1("ugknbfddgicrmopn"));
         assert!(is_string_nice_part_1("aaa"));
         assert!(!is_string_nice_part_1("jchzalrnumimnmhp"));
@@ -88,7 +88,7 @@ mod tests {
     }
 
     #[test]
-    fn test_part2() {
+    fn test_part_2() {
         assert!(is_string_nice_part_2("qjhvhtzxzqqjkmpb"));
         assert!(is_string_nice_part_2("xxyxx"));
         assert!(!is_string_nice_part_2("uurcxstgmygtbstg"));
