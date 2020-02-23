@@ -1,25 +1,26 @@
 use itertools::Itertools;
 
-fn process(vec: &Vec<usize>) -> Vec<usize> {
-    vec.iter()
+fn process(vec: &mut Vec<usize>) {
+    *vec = vec
+        .iter()
         .group_by(|&x| x)
         .into_iter()
         .fold(Vec::new(), |mut output, (key, group)| {
             output.push(group.count());
             output.push(*key);
             output
-        })
+        });
 }
 
 fn part_1() -> usize {
     let mut vec = vec![1, 3, 2, 1, 1, 3, 1, 1, 1, 2];
-    (0..40).for_each(|_| vec = process(&vec));
+    (0..40).for_each(|_| process(&mut vec));
     vec.len()
 }
 
 fn part_2() -> usize {
     let mut vec = vec![1, 3, 2, 1, 1, 3, 1, 1, 1, 2];
-    (0..50).for_each(|_| vec = process(&vec));
+    (0..50).for_each(|_| process(&mut vec));
     vec.len()
 }
 
