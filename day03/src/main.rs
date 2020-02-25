@@ -47,11 +47,11 @@ fn part_2(input: &str) -> usize {
 }
 
 fn main() {
-    let content = fs::read_to_string("input").expect("file not found");
-    let content = content.trim();
+    let input = fs::read_to_string("input").expect("file not found");
+    let input = input.trim();
 
-    assert_eq!(2081, part_1(&content));
-    assert_eq!(2341, part_2(&content));
+    assert_eq!(2081, part_1(input));
+    assert_eq!(2341, part_2(input));
 }
 
 #[cfg(test)]

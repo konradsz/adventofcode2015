@@ -19,7 +19,7 @@ impl Password {
             && !self
                 .0
                 .iter()
-                .any(|c| *c == 'i' as u8 || *c == 'o' as u8 || *c == 'l' as u8)
+                .any(|c| *c == b'i' || *c == b'o' || *c == b'l')
             && self.0.windows(2).enumerate().any(|(index, first)| {
                 self.0.windows(2).skip(index + 2).any(|second| {
                     first[0] != second[0] && first[0] == first[1] && second[0] == second[1]
@@ -43,16 +43,16 @@ impl Iterator for Password {
     type Item = Password;
 
     fn next(&mut self) -> Option<Password> {
-        if self.0.iter().all(|b| *b == 'z' as u8) {
+        if self.0.iter().all(|b| *b == b'z') {
             return None;
         }
 
-        self.0[7] = self.0[7] + 1;
+        self.0[7] += 1;
 
         for i in (0..8).rev() {
-            if self.0[i] > 'z' as u8 {
-                self.0[i] = 'a' as u8;
-                self.0[i - 1] = self.0[i - 1] + 1;
+            if self.0[i] > b'z' {
+                self.0[i] = b'a';
+                self.0[i - 1] += 1;
             }
         }
         Some(Password(self.0))

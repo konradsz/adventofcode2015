@@ -25,8 +25,8 @@ fn part_2() -> usize {
 }
 
 fn main() {
-    assert_eq!(492982, part_1());
-    assert_eq!(6989950, part_2());
+    assert_eq!(492_982, part_1());
+    assert_eq!(6_989_950, part_2());
 }
 
 #[cfg(test)]

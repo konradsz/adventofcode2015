@@ -109,11 +109,11 @@ fn part_2(input: &str) -> u32 {
 }
 
 fn main() {
-    let content = fs::read_to_string("input").expect("file not found");
-    let content = content.trim();
+    let input = fs::read_to_string("input").expect("file not found");
+    let input = input.trim();
 
-    assert_eq!(377891, part_1(content));
-    assert_eq!(14110788, part_2(content));
+    assert_eq!(377_891, part_1(input));
+    assert_eq!(14_110_788, part_2(input));
 }
 
 #[cfg(test)]

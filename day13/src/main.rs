@@ -105,8 +105,8 @@ fn main() {
     let input = fs::read_to_string("input").expect("file not found");
     let input = input.trim();
 
-    assert_eq!(709, part_1(&input));
-    assert_eq!(668, part_2(&input));
+    assert_eq!(709, part_1(input));
+    assert_eq!(668, part_2(input));
 }
 
 #[cfg(test)]

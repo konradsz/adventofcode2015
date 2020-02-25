@@ -10,7 +10,7 @@ struct Edge {
 type Graph = HashMap<String, Vec<Edge>>;
 
 fn add_edge(graph: &mut Graph, from: String, to: String, distance: u32) {
-    let edge = graph.entry(from).or_insert(Vec::new());
+    let edge = graph.entry(from).or_default();
     (*edge).push(Edge { name: to, distance });
 }
 
@@ -100,9 +100,9 @@ fn part_2(graph: &Graph) -> u32 {
 }
 
 fn main() {
-    let content = fs::read_to_string("input").expect("file not found");
-    let content = content.trim();
-    let graph = create_graph(&content);
+    let input = fs::read_to_string("input").expect("file not found");
+    let input = input.trim();
+    let graph = create_graph(&input);
 
     assert_eq!(251, part_1(&graph));
     assert_eq!(898, part_2(&graph));
