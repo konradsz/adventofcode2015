@@ -36,15 +36,8 @@ impl Warrior {
         self.armor.0 += item.armor.0;
     }
 
-    fn is_dead(&self) -> bool {
-        self.hit_points.0 == 0
-    }
-
-    fn attack(&self, rival: &mut Warrior) {
-        rival.hit_points.0 = rival.hit_points.0.saturating_sub(std::cmp::max(
-            1,
-            self.damage.0.saturating_sub(rival.armor.0),
-        ));
+    fn get_damage_against(&self, rival: &Warrior) -> usize {
+        std::cmp::max(1, self.damage.0.saturating_sub(rival.armor.0))
     }
 }
 
@@ -74,18 +67,14 @@ impl Item {
     }
 }
 
-fn check_if_player_wins(player: &mut Warrior, boss: &mut Warrior) -> bool {
-    loop {
-        player.attack(boss);
-        if boss.is_dead() {
-            return true;
-        }
+fn check_if_player_wins(player: &Warrior, boss: &Warrior) -> bool {
+    let player_dmg_per_round = player.get_damage_against(&boss);
+    let boss_dmg_per_round = boss.get_damage_against(&player);
 
-        boss.attack(player);
-        if player.is_dead() {
-            return false;
-        }
-    }
+    let rounds_to_kill_boss = (boss.hit_points.0 as f64 / player_dmg_per_round as f64).ceil();
+    let rounds_to_kill_player = (player.hit_points.0 as f64 / boss_dmg_per_round as f64).ceil();
+
+    rounds_to_kill_player > rounds_to_kill_boss
 }
 
 fn main() {
@@ -122,16 +111,16 @@ fn main() {
 
     for weapon in weapons.iter() {
         for armor in armors.iter() {
-            for rings in rings.iter().combinations(2){
+            for rings in rings.iter().combinations(2) {
                 let mut player = Warrior::new(Health(100), Damage(0), Armor(0));
-                let mut boss = Warrior::new(Health(109), Damage(8), Armor(2));
+                let boss = Warrior::new(Health(109), Damage(8), Armor(2));
                 player.equip_item(*weapon);
                 player.equip_item(*armor);
                 player.equip_item(*rings[0]);
                 player.equip_item(*rings[1]);
 
                 let cost = weapon.cost.0 + armor.cost.0 + rings[0].cost.0 + rings[1].cost.0;
-                if check_if_player_wins(&mut player, &mut boss) {
+                if check_if_player_wins(&player, &boss) {
                     if cost < best_buy {
                         best_buy = cost;
                     }
