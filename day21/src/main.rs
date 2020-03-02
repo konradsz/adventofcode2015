@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 #[derive(Copy, Clone)]
 struct Health(usize);
 #[derive(Copy, Clone)]
@@ -120,25 +122,23 @@ fn main() {
 
     for weapon in weapons.iter() {
         for armor in armors.iter() {
-            rings.iter().enumerate().for_each(|(index, ring_1)| {
-                rings.iter().skip(index + 1).for_each(|ring_2| {
-                    let mut player = Warrior::new(Health(100), Damage(0), Armor(0));
-                    let mut boss = Warrior::new(Health(109), Damage(8), Armor(2));
-                    player.equip_item(*weapon);
-                    player.equip_item(*armor);
-                    player.equip_item(*ring_1);
-                    player.equip_item(*ring_2);
+            for rings in rings.iter().combinations(2){
+                let mut player = Warrior::new(Health(100), Damage(0), Armor(0));
+                let mut boss = Warrior::new(Health(109), Damage(8), Armor(2));
+                player.equip_item(*weapon);
+                player.equip_item(*armor);
+                player.equip_item(*rings[0]);
+                player.equip_item(*rings[1]);
 
-                    let cost = weapon.cost.0 + armor.cost.0 + ring_1.cost.0 + ring_2.cost.0;
-                    if check_if_player_wins(&mut player, &mut boss) {
-                        if cost < best_buy {
-                            best_buy = cost;
-                        }
-                    } else if cost > worst_buy {
-                        worst_buy = cost;
+                let cost = weapon.cost.0 + armor.cost.0 + rings[0].cost.0 + rings[1].cost.0;
+                if check_if_player_wins(&mut player, &mut boss) {
+                    if cost < best_buy {
+                        best_buy = cost;
                     }
-                })
-            });
+                } else if cost > worst_buy {
+                    worst_buy = cost;
+                }
+            }
         }
     }
 
