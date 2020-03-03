@@ -1,21 +1,16 @@
 use itertools::Itertools;
 
-#[derive(Copy, Clone)]
-struct Health(usize);
-#[derive(Copy, Clone)]
+struct HitPoints(usize);
 struct Damage(usize);
-#[derive(Copy, Clone)]
 struct Armor(usize);
-#[derive(Copy, Clone)]
 struct Gold(usize);
 
 struct Warrior {
-    hit_points: Health,
+    hit_points: HitPoints,
     damage: Damage,
     armor: Armor,
 }
 
-#[derive(Copy, Clone)]
 struct Item {
     damage: Damage,
     armor: Armor,
@@ -23,7 +18,7 @@ struct Item {
 }
 
 impl Warrior {
-    fn new(hit_points: Health, damage: Damage, armor: Armor) -> Self {
+    fn new(hit_points: HitPoints, damage: Damage, armor: Armor) -> Self {
         Warrior {
             hit_points,
             damage,
@@ -31,7 +26,7 @@ impl Warrior {
         }
     }
 
-    fn equip_item(&mut self, item: Item) {
+    fn equip_item(&mut self, item: &Item) {
         self.damage.0 += item.damage.0;
         self.armor.0 += item.armor.0;
     }
@@ -112,12 +107,12 @@ fn main() {
     for weapon in weapons.iter() {
         for armor in armors.iter() {
             for rings in rings.iter().combinations(2) {
-                let mut player = Warrior::new(Health(100), Damage(0), Armor(0));
-                let boss = Warrior::new(Health(109), Damage(8), Armor(2));
-                player.equip_item(*weapon);
-                player.equip_item(*armor);
-                player.equip_item(*rings[0]);
-                player.equip_item(*rings[1]);
+                let mut player = Warrior::new(HitPoints(100), Damage(0), Armor(0));
+                let boss = Warrior::new(HitPoints(109), Damage(8), Armor(2));
+                player.equip_item(weapon);
+                player.equip_item(armor);
+                player.equip_item(rings[0]);
+                player.equip_item(rings[1]);
 
                 let cost = weapon.cost.0 + armor.cost.0 + rings[0].cost.0 + rings[1].cost.0;
                 if check_if_player_wins(&player, &boss) {
